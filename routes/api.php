@@ -8,6 +8,10 @@ use App\Http\Controllers\recipientsController;
 use App\Http\Controllers\schedule_recipientsController;
 use App\Http\Controllers\FileUploadController;
 use App\Http\Controllers\DocumentContoller;
+use App\Http\Controllers\AjaxUploadController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ResetPasswordController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,28 +23,34 @@ use App\Http\Controllers\DocumentContoller;
 |
 */
 
+
+
 //API route for register new user
 Route::post('/register', [App\Http\Controllers\API\AuthController::class, 'register']);
 //API route for login user
 Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login']);
 //Protecting Routes
-Route::group(['middleware' => ['auth:sanctum']], function (){ Route::get('/profile', function(Request $request){
-        return $request->user();
-    });
-    // API route for logout user
-Route::post('/logout', [App\Http\Controllers\API\AuthController::class, 'logout']);
+Route::group(['middleware' => ['auth:sanctum']],
+ function (){ 
+    Route::get('/profile', function(Request $request){return $request->user();});
 
-
-
-Route::prefix('notes')->group(function(){
+    
+    // 
+    Route::prefix('notes')->group(function(){
     Route::get('/',[noteController::class,'show']);
     Route::post('/',[noteController::class,'Add']);
     Route::put('/{id}',[noteController::class,'update']);
     Route::delete('/{id}',[noteController::class,'delete']); 
+    // 
 });
+    
+    // API route for logout user
+Route::post('/logout', [App\Http\Controllers\API\AuthController::class, 'logout']);
+Route::post('/changepassword', [noteController::class, 'change_password']);
+
+
 
 });
-
 
 
 Route::prefix('schedule_notes')->group(function(){
@@ -68,8 +78,10 @@ Route::prefix('schedule_recipients')->group(function(){
    Route::delete('/{id}',[schedule_recipientsController::class,'delete']); 
 });
 
-    
+  Route::get('/ajax_upload/action',[AjaxUploadController::class,'action']);
 
-  // Route::post('/file-upload',[FileUploadController::class,'FileUpload']);
+Route::post('/password/email',[ForgotPasswordController::class,"sendResetLinkEmail"]);
+Route::post('/password/reset',[ResetPasswordController::class,"reset"]);
 
-   Route::post('/documents/upload',[DocumentContoller::class, 'update']);
+
+

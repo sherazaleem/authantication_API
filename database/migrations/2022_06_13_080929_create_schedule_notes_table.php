@@ -19,7 +19,7 @@ class CreateScheduleNotesTable extends Migration
             $table->foreign('notes_id')->references('id')->on('notes')->onDelete('cascade');
             $table->integer('access_code');
             $table->integer('is_scheduled');
-            $table->integer('scheduled_at');
+            $table->dateTime('scheduled_at');
             $table->dateTime('created_at');
             $table->dateTime('updated_at');
         });

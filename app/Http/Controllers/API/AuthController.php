@@ -7,10 +7,11 @@ use Illuminate\Support\Facades\Hash;
 // use Illuminate\Support\Facades\Password;
 // use Illuminate\Auth\Events\PasswordReset;
 // use Illuminate\Support\Facades\Validator;
-use Auth;
+// use Auth;
 use Validator;
 use App\Models\User;
-
+use App\Models\Account;
+use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
     public function register(Request $request)
@@ -31,10 +32,21 @@ class AuthController extends Controller
             'password' => Hash::make($request->password)
          ]);
 
-        $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()
-            ->json(['data' => $user,'access_token' => $token, 'token_type' => 'Bearer', ]);
+        $token = $user->createToken('auth_token')->plainTextToken;
+        
+        // 
+
+
+       //  $admin=User::where($request->email)->get();
+
+       //  Notification::send($admin, new RegisteredUserNotification($user));
+
+       // event(new Registered($user));
+
+       // Auth::login($user);
+        //
+        return view('dashboard.notes.notes',compact('user'));
     }
 
     public function login(Request $request)
@@ -49,8 +61,7 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()
-            ->json(['message' => 'Hi '.$user->name.', welcome to home','access_token' => $token, 'token_type' => 'Bearer', ]);
+        return response()->json($token);
     }
 
     // method for user logout and delete token
@@ -67,19 +78,24 @@ class AuthController extends Controller
 
      $validator = Validator::make($request->all(),[
             'old_password' => 'required',
-            'password' => 'required|min:6|confirmed',
-            'confirm_password' => 'required|same:password|min:6'
+            'password' => 'required|min:8',
         ]);
-           if($validator->fails()){
+
+     if($validator->fails()){
             return response()->json([
                 'message'=>'validator fails',
                 'errors'=>$validator->errors()],422);       
         }
+
         $user=$request->user();
-        if (Hash::check($request->old_password,$user->password )) 
-           {  $user->update([
+        
+        // return response()->json($user); 
+        if (Hash::check($request->old_password,$user->password)) 
+        {  
+            $user->update([
                 'password'=>Hash::make($request->password)
             ]);
+
             return response()->json([
                 'message'=>'OLD password successfully update'],200);
         
@@ -87,11 +103,13 @@ class AuthController extends Controller
         else{
 
             return response()->json([
-                'message'=>'OLD password not matched'],400);
+                'message'=>'OLD password not matched ',$user],400);
 
 
         }
-
+        
+        
+     
   }
 
 

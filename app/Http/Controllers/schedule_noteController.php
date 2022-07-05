@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\schedule_notes;
+use App\Models\note;
+use Carbon\Carbon;
 class schedule_noteController extends Controller
 {
     public function show(){
@@ -13,12 +15,20 @@ class schedule_noteController extends Controller
     }
 
     public function Add(Request $request)
-    {
+    {   
         $add= new schedule_notes;
+        if (note::where("id",$request->notes_id))
+         {  
+        $id=note::where("id",$request->notes_id)->get();
         $add->notes_id=$request->notes_id;
         $add->access_code=$request->access_code;
-        $add->is_scheduled=$request->is_scheduled;
-        $add->scheduled_at=$request->scheduled_at;
+        $add->is_scheduled=1;
+
+        foreach($id as $date){
+
+            $add->scheduled_at=$date->created_at;
+        }
+        
         $result=$add->save();
         if ($result) {
             
@@ -27,6 +37,9 @@ class schedule_noteController extends Controller
         {
             return["result"=>"somthing wrong"];
         }
+        }
+        // $id=note::whereDate('created_at',"=", Carbon::now()->format('Y-m-d'));
+        // die($id);
         
 
     }

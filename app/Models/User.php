@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
-class User extends Authenticatable
+use App\Notifications\ResetPasswordNotification;
+use Illuminate\Contracts\Auth\CanResetPassword;
+class User extends Authenticatable implements CanResetPassword
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -21,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        
     ];
 
     /**
@@ -43,8 +45,7 @@ class User extends Authenticatable
     ];
 
     public function sendPasswordResetNotification($token)
-    {
-        $url= 'https://spa.test/reset-password?token=' .$token;
-        $this->notify(new ResetPasswordNotification($url));
-    }
+     {
+          $this->notify(new ResetPasswordNotification($token));
+     }
 }

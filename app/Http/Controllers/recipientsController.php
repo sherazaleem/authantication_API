@@ -15,15 +15,10 @@ class recipientsController extends Controller
         $add= new recipients;
         $add->name=$request->name;
         $add->email=$request->email;
-        $result=$add->save();
-        if ($result) {
-            
-            return["result"=>"saved"];
-        }else
-        {
-            return["result"=>"somthing wrong"];
-        }
-
+        // $result=
+        $add->save();
+        return redirect()->back();
+        
     }
      public function show(Request $request)
     {
@@ -51,14 +46,17 @@ class recipientsController extends Controller
         $add=recipients::find($id);
         $add->name=$request->name;
         $add->email=$request->email;
-        $result=$add->save();
-        if ($result) {
+        // $result=
+        $add->save();
+
+        return redirect()->back();
+        // if ($result) {
             
-            return["result"=>"update the value permanaty"];
-        }else
-        {
-            return["result"=>"somthing wrong"];
-        }
+        //     return["result"=>"update the value permanaty"];
+        // }else
+        // {
+        //     return["result"=>"somthing wrong"];
+        // }
 
 
     }

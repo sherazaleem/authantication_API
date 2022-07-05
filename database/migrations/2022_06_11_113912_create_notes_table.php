@@ -20,15 +20,15 @@ class CreateNotesTable extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('title');
             $table->text('description');
-            $table->string('voice_note')->default(0);
-            $table->string('video_note')->default(0);
-            $table->integer('is_text_note');
-            $table->integer('is_voice_note');
-            $table->integer('is_video_note');
+            $table->string('voice_note')->nullable();
+            $table->string('video_note')->nullable();
+            $table->integer('is_text_note')->default(0);
+            $table->integer('is_voice_note')->default(0);
+            $table->integer('is_video_note')->default(0);
             $table->integer('status');
             $table->dateTime('created_at');
             $table->dateTime('updated_at');
-            $table->dateTime('deleted_at')->nullable();
+            $table->softDeletes();
         });
     }
 
